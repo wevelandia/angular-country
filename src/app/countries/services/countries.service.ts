@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 
 import { Country } from '../interfaces/country';
 
@@ -10,6 +10,46 @@ export class CountriesService {
   private apiUrl: string = 'https://restcountries.com/v3.1';
 
   constructor(private http: HttpClient) { }
+
+  // searchCountryByAlphaCode: Me deberia de devolver un solo País, por ahora se dice que retorn aun Observable<Country[]>
+  /* searchCountryByAlphaCode( code: string ): Observable<Country[]>  {
+    const url = `${ this.apiUrl }/alpha/${ code }`;
+
+    return this.http.get<Country[]>( url )
+      .pipe(
+        catchError( error => {
+          console.log( 'Paso por catchError - Por un unico país ', error );
+
+          return of([]);
+        } )
+      );
+  } */
+
+  // Aca vamos a regresar un solo Pais Observable<Country[]> del observable en country-page.component
+  //searchCountryByAlphaCode( code: string ): Observable<Country[]>  {
+  /* searchCountryByAlphaCode( code: string ): Observable<Country[]>  {
+    const url = `${ this.apiUrl }/alpha/${ code }`;
+
+    return this.http.get<Country[]>( url )
+      .pipe(
+        catchError( error => {
+          console.log( 'Paso por catchError - Por un unico país ', error );
+
+          return of([]);
+        } )
+      );
+  } */
+
+  // En este pipe, el map regresa un pais o regresa null.
+  searchCountryByAlphaCode( code: string ): Observable<Country | null>  {
+    const url = `${ this.apiUrl }/alpha/${ code }`;
+
+    return this.http.get<Country[]>( url )
+      .pipe(
+        map( countries => countries.length > 0 ? countries[0]: null ),
+        catchError( () => of(null))
+      );
+  }
 
   searchCapital( term: string ): Observable<Country[]>  {
     // Acá no se esta realizando la solicitud, para que se haga la solicitud se tiene que subscribir.
@@ -36,7 +76,33 @@ export class CountriesService {
       return this.http.get<Country[]>( url )
       .pipe(
         catchError( error => {
-          console.log( 'Paso por catchError: ', error );
+          console.log( 'Paso por catchError - Por Capital ' , error );
+
+          return of([]);
+        } )
+      );
+  }
+
+  searchCountry( term: string ): Observable<Country[]>  {
+    const url = `${ this.apiUrl }/name/${ term }`;
+
+    return this.http.get<Country[]>( url )
+      .pipe(
+        catchError( error => {
+          console.log( 'Paso por catchError - Por País ', error );
+
+          return of([]);
+        } )
+      );
+  }
+
+  searchRegion( region: string ): Observable<Country[]>  {
+    const url = `${ this.apiUrl }/region/${ region }`;
+
+    return this.http.get<Country[]>( url )
+      .pipe(
+        catchError( error => {
+          console.log( 'Paso por catchError - Por Región ', error );
 
           return of([]);
         } )
