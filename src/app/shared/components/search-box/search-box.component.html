@@ -1,6 +1,9 @@
+<!-- Esta linea se coemntarea para poder implementar el Debounce: Hacer la petición cuando el usuario deja de escribir. -->
+<!-- (keyup.enter)="emitValue( txtInput.value )" -->
 <input
   type="text"
+  [value]="initialValue"
   [placeholder]="placeholder"
   class="form-control"
-  (keyup.enter)="emitValue( txtInput.value )"
+  (keyup)="onKeyPress( txtInput.value)"
   #txtInput>
